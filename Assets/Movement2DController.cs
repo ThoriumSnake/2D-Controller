@@ -36,8 +36,10 @@ public class Movement2DController : MonoBehaviour {
         rb.velocity = new Vector2(movement * moveSpeed, rb.velocity.y);
     }
 
-    public void Jump(bool jump) {
-        if (jump)
+    public void Jump(ref bool jump) {
+        if (jump) {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jump = false;
+        }
     }
 }
