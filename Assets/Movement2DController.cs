@@ -8,6 +8,8 @@ public class Movement2DController : MonoBehaviour {
     [SerializeField] float jumpForce = 5f;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpGravity = 2.5f;
+    [SerializeField] float maxFallSpeed = 10f;
+    [SerializeField] bool clampFall = true;
 
     Rigidbody2D rb;
     float oldGravity;
@@ -26,6 +28,8 @@ public class Movement2DController : MonoBehaviour {
             rb.gravityScale = lowJumpGravity;
         else
             rb.gravityScale = oldGravity;
+
+        rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -maxFallSpeed, Mathf.Infinity));
     }
 
     public void Move(float movement) {
