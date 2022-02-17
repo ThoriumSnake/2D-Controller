@@ -10,6 +10,7 @@ public class Movement2DController : MonoBehaviour {
     [SerializeField] float lowJumpGravity = 2.5f;
     [SerializeField] float maxFallSpeed = 10f;
     [SerializeField] bool clampFall = true;
+    [SerializeField] float gravity = 1f;
 
     Rigidbody2D rb;
     float oldGravity;
