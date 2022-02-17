@@ -13,10 +13,11 @@ public class Movement2DController : MonoBehaviour {
 
     Rigidbody2D rb;
     float oldGravity;
+    [SerializeField] float gravity = 1f;
 
     void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
-        oldGravity = rb.gravityScale;
+
     }
 
     void Update() {
@@ -27,7 +28,7 @@ public class Movement2DController : MonoBehaviour {
         else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
             rb.gravityScale = lowJumpGravity;
         else
-            rb.gravityScale = oldGravity;
+            rb.gravityScale = gravity;
 
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -maxFallSpeed, Mathf.Infinity));
     }
