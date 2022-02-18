@@ -11,15 +11,15 @@ public class Movement2DController : MonoBehaviour {
     [SerializeField] float gravity = 1f;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpGravity = 2.5f;
+    [SerializeField] string GroundLayerName = "Obstacle";
 
-    [Space(20)]
-
+    [Header("EXTRA JUMP FEATURES")]
     [SerializeField] bool clampFall = true;
     [SerializeField] float maxFallSpeed = 10f;
-    [SerializeField] string GroundLayerName = "Obstacle";
     [SerializeField] float jumpBufferTime = 0.1f;
+    [SerializeField] float coyoteThreshold = 0.1f;
 
-    [Header("APEX")]
+    [Header("APEX MOD")]
     [SerializeField] bool modifyApex = true;
     [SerializeField] float _apexBonus = 2f;
     [SerializeField] float minGravity = 0.66f;
