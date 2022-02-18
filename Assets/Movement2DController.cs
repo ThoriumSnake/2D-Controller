@@ -26,7 +26,9 @@ public class Movement2DController : MonoBehaviour {
 
     Rigidbody2D rb;
     bool grounded;
+    bool jumped;
     float apexPoint;
+    float timeLeftGround;
 
     void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -58,18 +60,23 @@ public class Movement2DController : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D col) {
-        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName))
+        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName)) {
             grounded = true;
+            jumped = false;
+        }
     }
 
     //To fix a stuck on the ground bug after sliding off a ramp
     void OnTriggerStay2D(Collider2D col) {
-        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName))
+        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName)) {
             grounded = true;
+            jumped = false;
+        }
     }
 
     void OnTriggerExit2D(Collider2D col) {
         grounded = false;
+        timeLeftGround = Time.time;
     }
 
     //TODO Small Acceleration (toggleable)
@@ -83,14 +90,23 @@ public class Movement2DController : MonoBehaviour {
         rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
     }
 
-    public void Jump(ref bool jump, ref float jumpPressedTime) {
-        //Checks for regular jump and buffered jump
-        if ((jump && grounded) || (grounded && jumpPressedTime + jumpBufferTime > Time.time)) {
+    public void Jump(ref bool jumpInput, ref float jumpPressedTime) {
+        bool canJump = jumpInput && grounded;
+        bool canBufferJump = grounded && jumpPressedTime + jumpBufferTime > Time.time;
+        bool canCoyote = !grounded && jumpInput && !jumped && timeLeftGround + coyoteThreshold > Time.time;
+
+        if (canJump || canBufferJump) {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             //Doing this to prevent multiple jumps
             jumpPressedTime = 0;
+            jumped = true;
+
+        } else if (canCoyote) {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            timeLeftGround = 0;
+            jumped = true;
         }
-        jump = false;
+        jumpInput = false;
     }
 
     void CalculateApex() {
