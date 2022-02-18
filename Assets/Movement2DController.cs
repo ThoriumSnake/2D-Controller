@@ -4,37 +4,66 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement2DController : MonoBehaviour {
-    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float _moveSpeed = 5f;
+
+    [Header("JUMP")]
     [SerializeField] float jumpForce = 5f;
+    [SerializeField] float gravity = 1f;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpGravity = 2.5f;
-    [SerializeField] float maxFallSpeed = 10f;
+
+    [Space(20)]
+
     [SerializeField] bool clampFall = true;
+    [SerializeField] float maxFallSpeed = 10f;
     [SerializeField] string GroundLayerName = "Obstacle";
-    [SerializeField] float gravity = 1f;
+    [SerializeField] float jumpBufferTime = 0.1f;
+
+    [Header("APEX")]
+    [SerializeField] bool modifyApex = true;
+    [SerializeField] float _apexBonus = 2f;
+    [SerializeField] float minGravity = 0.66f;
 
     Rigidbody2D rb;
     bool grounded;
+    float apexPoint;
 
     void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
+    void Update() {
+        CalculateApex();
+    }
+
     void FixedUpdate() {
+        float apexGravity = Mathf.Lerp(gravity, minGravity, apexPoint);
+
+
         if (rb.velocity.y < 0)
             rb.gravityScale = fallMultiplier;
         //NOTE: If you're being "propelled" or moved upwards by an external force, pressing the jump button will increase your gravity, a way around this could be to check if you are being influenced by an external force and not increase gravity if so.
         //The way this works is: you're going up, you stop pressing the button, you have more gravity, you don't reach the original jump apex.
         else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
             rb.gravityScale = lowJumpGravity;
+        else if (!grounded && modifyApex)
+            rb.gravityScale = apexGravity;
         else
             rb.gravityScale = gravity;
 
         if (clampFall)
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -maxFallSpeed, Mathf.Infinity));
+
+        Debug.Log("Gravity: " + rb.gravityScale);
     }
 
     void OnTriggerEnter2D(Collider2D col) {
+        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName))
+            grounded = true;
+    }
+
+    //To fix a stuck on the ground bug after sliding off a ramp
+    void OnTriggerStay2D(Collider2D col) {
         if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName))
             grounded = true;
     }
@@ -43,15 +72,30 @@ public class Movement2DController : MonoBehaviour {
         grounded = false;
     }
 
-    //TODO Acceleration (toggleable)
-    public void Move(float movement) {
-        rb.velocity = new Vector2(movement * moveSpeed, rb.velocity.y);
+    //TODO Small Acceleration (toggleable)
+    //TODO Add a "jumped" check to make sure the apex mod is only activated after a jump
+    public void Move(float direction) {
+        float apexBonus = direction * _apexBonus * apexPoint;
+        float moveSpeed = direction * _moveSpeed;
+        if (modifyApex)
+            moveSpeed += apexBonus;
+
+        rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
     }
 
-    public void Jump(ref bool jump) {
-        if (jump) {
+    public void Jump(ref bool jump, ref float jumpPressedTime) {
+        //Checks for regular jump and buffered jump
+        if ((jump && grounded) || (grounded && jumpPressedTime + jumpBufferTime > Time.time)) {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            jump = false;
+            //Doing this to prevent multiple jumps
+            jumpPressedTime = 0;
         }
+        jump = false;
+    }
+
+    void CalculateApex() {
+        //A value used to reduce gravity and increase speed at the top of a jump
+        if (!grounded)
+            apexPoint = Mathf.InverseLerp(jumpForce, 0, Mathf.Abs(rb.velocity.y));
     }
 }
