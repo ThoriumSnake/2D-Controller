@@ -6,6 +6,10 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     Movement2DController controller;
+    [System.NonSerialized] public float horDirection;
+    [System.NonSerialized] public bool jump;
+    [System.NonSerialized] public float jumpPressedTime;
+
     [SerializeField] float WalkMultiplier = 0.25f;
 
     void Start() {
