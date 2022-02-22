@@ -11,7 +11,7 @@ public class Movement2DController : MonoBehaviour {
     [SerializeField] float gravity = 1f;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpGravity = 2.5f;
-    [SerializeField] string GroundLayerName = "Obstacle";
+    [SerializeField] public string groundLayerName = "Obstacle";
 
     [Header("EXTRA JUMP FEATURES")]
     [SerializeField] bool clampFall = true;
@@ -60,7 +60,7 @@ public class Movement2DController : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D col) {
-        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName)) {
+        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(groundLayerName)) {
             grounded = true;
             jumped = false;
         }
@@ -68,7 +68,7 @@ public class Movement2DController : MonoBehaviour {
 
     //To fix a stuck on the ground bug after sliding off a ramp
     void OnTriggerStay2D(Collider2D col) {
-        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(GroundLayerName)) {
+        if (col != null && col.gameObject.layer == LayerMask.NameToLayer(groundLayerName)) {
             grounded = true;
             jumped = false;
         }
