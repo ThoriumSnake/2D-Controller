@@ -6,9 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     Movement2DController controller;
-    public float horDirection;
-    public bool jump;
-    public float jumpPressedTime;
+    [SerializeField] float WalkMultiplier = 0.25f;
 
     void Start() {
         controller = gameObject.GetComponent<Movement2DController>();
@@ -17,6 +15,8 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         horDirection = Input.GetAxisRaw("Horizontal");
+        if (Input.GetButton("Walk"))
+            horDirection *= WalkMultiplier;
 
         //Update is called more than FixedUpdate, so the jump variable can't be dependent on whether the user pressed jump on a specific frame
         if (Input.GetButtonDown("Jump")) {
