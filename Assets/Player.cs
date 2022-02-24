@@ -10,7 +10,7 @@ public class Player : MonoBehaviour {
     [System.NonSerialized] public bool jump;
     [System.NonSerialized] public float jumpPressedTime;
 
-    [SerializeField] float WalkMultiplier = 0.25f;
+    [SerializeField] float WalkMultiplier = 0.5f;
 
     void Start() {
         controller = gameObject.GetComponent<Movement2DController>();

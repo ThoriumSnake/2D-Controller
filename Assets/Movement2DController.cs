@@ -4,25 +4,25 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement2DController : MonoBehaviour {
-    [SerializeField] float _moveSpeed = 5f;
+    [SerializeField] float _moveSpeed = 10f;
 
     [Header("JUMP")]
-    [SerializeField] float jumpForce = 5f;
-    [SerializeField] float gravity = 1f;
-    [SerializeField] float fallMultiplier = 2.5f;
-    [SerializeField] float lowJumpGravity = 2.5f;
+    [SerializeField] float jumpForce = 21f;
+    [SerializeField] float gravity = 6f;
+    [SerializeField] float fallMultiplier = 7f;
+    [SerializeField] float lowJumpGravity = 15f;
     [SerializeField] public string groundLayerName = "Obstacle";
 
     [Header("EXTRA JUMP FEATURES")]
     [SerializeField] bool clampFall = true;
-    [SerializeField] float maxFallSpeed = 10f;
+    [SerializeField] float maxFallSpeed = 25f;
     [SerializeField] float jumpBufferTime = 0.1f;
     [SerializeField] float coyoteThreshold = 0.1f;
 
     [Header("APEX MOD")]
     [SerializeField] bool modifyApex = true;
-    [SerializeField] float _apexBonus = 2f;
-    [SerializeField] float minGravity = 0.66f;
+    [SerializeField] float _apexBonus = 3f;
+    [SerializeField] float minGravity = 5f;
 
     Rigidbody2D rb;
     bool grounded;
